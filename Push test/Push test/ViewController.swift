@@ -36,7 +36,10 @@ class ViewController: UIViewController {
             "to" : "\(tokenDeviceFCM)",
             "notification": [
                 "body" : "enviou uma mensagem",
-                "title": "EllenMota"
+                "title": "EllenMota",
+                "priority" : "high",
+                "badge": "1",
+                "sound": "default"
             ]
         ]
         

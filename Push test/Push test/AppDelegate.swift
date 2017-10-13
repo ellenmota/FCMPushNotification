@@ -37,18 +37,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             // For iOS 10 data message (sent via FCM)
             Messaging.messaging().delegate = self
             
+            
+            
+            
         } else {
             let settings: UIUserNotificationSettings =
                 UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
             application.registerUserNotificationSettings(settings)
+            
+            let types: UIUserNotificationType = UIUserNotificationType.badge
+            let notificationSettings: UIUserNotificationSettings = UIUserNotificationSettings(types: types, categories: nil)
+             application.registerUserNotificationSettings(notificationSettings)
+            
+            incrementBadgeNumberBy(badgeNumberIncrement: UIApplication.shared.applicationIconBadgeNumber)
         }
         
         application.registerForRemoteNotifications()
+        
+       
         
         FirebaseApp.configure()
         
         return true
     }
+    
+ 
+    
+    func incrementBadgeNumberBy(badgeNumberIncrement: Int) {
+        let currentBadgeNumber = UIApplication.shared.applicationIconBadgeNumber
+        let updatedBadgeNumber = currentBadgeNumber + badgeNumberIncrement
+        if (updatedBadgeNumber > -1) {
+            UIApplication.shared.applicationIconBadgeNumber = updatedBadgeNumber
+        }
+        
+        
+    }
+    
+    
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         
@@ -60,6 +85,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
             token = token + String(format: "%02.2hhx", arguments: [deviceToken[i]])
         }
         print("Registration succeeded! Token Device: ", token)
+        
+    
+        
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
@@ -85,6 +113,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
+        
+       // Messaging.messaging().shouldEstablishDirectChannel = false
+        
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
@@ -94,6 +125,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
+
+        application.applicationIconBadgeNumber = 0
+        
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
     
@@ -115,6 +149,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,UNUserNotificationCenterDe
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         // if you set a member variable in didReceiveRemoteNotification, you  will know if this is from closed or background
+        
+        
         print("Handle push from background or closed\(response.notification.request.content.userInfo)")
         
     }
